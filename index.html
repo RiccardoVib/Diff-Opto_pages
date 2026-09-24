@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Signal-Flow-Structured State-Space Model of Optical Dynamic Range Compressors</title>
+  <style>
+    :root { --bg:#0f1117; --panel:#171a22; --text:#f2f4f8; --muted:#aab2c0; --accent:#79b8ff; --line:#2a3040; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif; line-height:1.55; }
+    main { max-width:1100px; margin:0 auto; padding:48px 24px 72px; }
+    h1 { font-size:clamp(2rem,5vw,3.5rem); line-height:1.1; margin:0 0 16px; letter-spacing:-.03em; }
+    h2 { margin-top:42px; font-size:1.45rem; border-bottom:1px solid var(--line); padding-bottom:8px; }
+    .authors { color:var(--muted); margin-bottom:32px; }
+    .abstract { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:24px; }
+    .abstract h2 { margin:0 0 10px; border:0; padding:0; }
+    .keywords { color:var(--muted); margin-top:14px; font-size:.95rem; }
+    .audio-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:16px; }
+    .example { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px; }
+    .example h3 { margin:0 0 12px; font-size:1rem; color:var(--accent); }
+    .track { margin:11px 0; }
+    .track label { display:block; color:var(--muted); font-size:.84rem; margin-bottom:4px; }
+    audio { width:100%; height:34px; }
+    code { color:#c9e2ff; }
+    pre { overflow:auto; background:#0b0d12; border:1px solid var(--line); border-radius:10px; padding:16px; }
+    @media (max-width:600px) { main { padding:30px 16px 50px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>A Signal-Flow-Structured State-Space Model of Optical Dynamic Range Compressors</h1>
+      <div class="authors">Riccardo Simionato · Univ. Bordeaux, CNRS, Bordeaux INP, LaBRI · DAFx25</div>
+    </header>
+
+    <section class="abstract">
+      <h2>Abstract</h2>
+      <p>Optical dynamic range compressors exhibit complex, time-varying ballistics that make them difficult to model with fixed analytical expressions. This work presents a state-space neural network that mirrors the compressor’s signal flow to improve both accuracy and interpretability. We evaluate the proposed model on the Teletronix LA-2A and Tube-Tech CL 1B optical compressors, comparing it with black-box and gray-box baselines. The model combines a multi-state, program-dependent detector, separate ballistics and static-curve pathways, a conditioned signal-path state-space model, and a feedback topology while preserving causal sample-by-sample processing. We also introduce a Multi-Scale Temporal Dynamic loss that emphasizes discrepancies in attack and release trajectories across several temporal resolutions. The proposed model ranks competitively on every metric for both devices while using only 124 trainable parameters and 245 FLOPs per output sample, substantially reducing the computational cost of larger black-box baselines.</p>
+      <div class="keywords"><strong>Index Terms:</strong> dynamic range compression, gray-box modeling, state-space models, LA-2A, CL 1B, differentiable digital signal processing</div>
+    </section>
+
+    <section>
+      <h2>Audio examples</h2>
+      <p>Each example contains one input signal, one target recording from the hardware compressor, and six model outputs. Replace the placeholder paths below with the corresponding audio files for ten examples.</p>
+      <div id="audio-examples" class="audio-grid"></div>
+    </section>
+
+    <section>
+      <h2>Citation</h2>
+      <pre><code>@inproceedings{simionatoSignalFlowOpto_2025,
+  author    = {Simionato, Riccardo},
+  title     = {A Signal-Flow-Structured State-Space Model of Optical Dynamic Range Compressors},
+  booktitle = {Proceedings of the International Conference on Digital Audio Effects (DAFx25)},
+  year      = {2025}
+}</code></pre>
+    </section>
+  </main>
+
+  <script>
+    const examples = Array.from({ length: 10 }, (_, i) => ({
+      title: `Example ${String(i + 1).padStart(2, '0')}`,
+      input: `audio/example_${i + 1}/input.wav`,
+      target: `audio/example_${i + 1}/target.wav`,
+      outputs: Array.from({ length: 6 }, (_, j) => `audio/example_${i + 1}/output_${j + 1}.wav`)
+    }));
+
+    const audio = (label, src) => `
+      <div class="track">
+        <label>${label}</label>
+        <audio controls preload="none" src="${src}">
+          Your browser does not support the audio element.
+        </audio>
+      </div>`;
+
+    document.getElementById('audio-examples').innerHTML = examples.map(example => `
+      <article class="example">
+        <h3>${example.title}</h3>
+        ${audio('Input', example.input)}
+        ${audio('Target', example.target)}
+        ${example.outputs.map((src, i) => audio(`Output ${i + 1}`, src)).join('')}
+      </article>`).join('');
+  </script>
+</body>
+</html>
