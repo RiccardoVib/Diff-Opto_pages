@@ -57,30 +57,52 @@
     </section>
   </main>
 
-  <script>
-    const examples = Array.from({ length: 10 }, (_, i) => ({
-      title: `Example ${String(i + 1).padStart(2, '0')}`,
-      input: `audio/example_${i + 1}/input.wav`,
-      target: `audio/example_${i + 1}/target.wav`,
-      outputs: Array.from({ length: 6 }, (_, j) => `audio/example_${i + 1}/output_${j + 1}.wav`)
-    }));
+<script>
+  const titlesNames = [
+    "Peak Reduction: 1",
+    "Peak Reduction: 2",
+    "Peak Reduction: 3",
+    "Peak Reduction: 4",
+    "Peak Reduction: 5",
+    "Peak Reduction: 6",
+    "Peak Reduction: 7",
+    "Peak Reduction: 8",
+    "Peak Reduction: 9",
+    "Peak Reduction: 10"
+    // edit these as you like
+  ];
 
-    const audio = (label, src) => `
-      <div class="track">
-        <label>${label}</label>
-        <audio controls preload="none" src="${src}">
-          Your browser does not support the audio element.
-        </audio>
-      </div>`;
+  const outputNames = [
+    "Diff-Opto",
+    "Mamba",
+    "SPTMod",
+    "TCN",
+    "GCN-TFILM",
+    "GreyBoxComp"
+  ];
 
-    document.getElementById('audio-examples').innerHTML = examples.map(example => `
-      <article class="example">
-        <h3>${example.title}</h3>
-        ${audio('Input', example.input)}
-        ${audio('Target', example.target)}
-        const outputNames = ["Diff-Opto", "Mamba", "SPTMod", "TCN", "GCN-TFILM", "GreyBoxComp"];
-        ${example.outputs.map((src, i) => audio(outputNames[i], src)).join('')}
-      </article>`).join('');
-  </script>
+  const examples = Array.from({ length: 10 }, (_, i) => ({
+    // title is now taken from titlesNames[i]
+    input: `audio/example_${i + 1}/input.wav`,
+    target: `audio/example_${i + 1}/target.wav`,
+    outputs: Array.from({ length: 6 }, (_, j) => `audio/example_${i + 1}/output_${j + 1}.wav`)
+  }));
+
+  const audio = (label, src) => `
+    <div class="track">
+      <label>${label}</label>
+      <audio controls preload="none" src="${src}">
+        Your browser does not support the audio element.
+      </audio>
+    </div>`;
+
+  document.getElementById('audio-examples').innerHTML = examples.map((example, i) => `
+    <article class="example">
+      <h3>${titlesNames[i]}</h3>
+      ${audio('Input', example.input)}
+      ${audio('Target', example.target)}
+      ${example.outputs.map((src, j) => audio(outputNames[j], src)).join('')}
+    </article>`).join('');
+</script>
 </body>
 </html>
