@@ -42,7 +42,7 @@
 
     <section>
       <h2>Audio examples</h2>
-      <p>Each example contains one input signal, one target recording from the hardware compressor, and six model outputs. Replace the placeholder paths below with the corresponding audio files for ten examples.</p>
+      <p>Each example contains one input signal, one target recording from the hardware compressor, and the model outputs.</p>
       <div id="audio-examples" class="audio-grid"></div>
     </section>
 
@@ -78,7 +78,8 @@
         <h3>${example.title}</h3>
         ${audio('Input', example.input)}
         ${audio('Target', example.target)}
-        ${example.outputs.map((src, i) => audio(`Output ${i + 1}`, src)).join('')}
+        const outputNames = ["Diff-Opto", "Mamba", "SPTMod", "TCN", "GCN-TFILM", "GreyBoxComp"];
+        ${example.outputs.map((src, i) => audio(outputNames[i], src)).join('')}
       </article>`).join('');
   </script>
 </body>
