@@ -1,30 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" href="./favicon.ico" type="image/x-icon">
-  <link rel="icon" href="data:,">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="data:,">
   <title>A Signal-Flow-Structured State-Space Model of Optical Dynamic Range Compressors</title>
   <style>
-    :root { --bg:#ffffff; --panel:#f5f7fb; --text:#0b0f19; --muted:#5a6475; --accent:#0066ff; --line:#dce2ee; }
-    * { box-sizing: border-box; }
+    :root { --bg:#fff; --panel:#f5f7fb; --text:#0b0f19; --muted:#5a6475; --accent:#065bd8; --line:#dce2ee; }
+    * { box-sizing:border-box; }
     body { margin:0; background:var(--bg); color:var(--text); font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif; line-height:1.55; }
     main { max-width:1100px; margin:0 auto; padding:48px 24px 72px; }
     h1 { font-size:clamp(2rem,5vw,3.5rem); line-height:1.1; margin:0 0 16px; letter-spacing:-.03em; }
-    h2 { margin-top:42px; font-size:1.45rem; border-bottom:1px solid var(--line); padding-bottom:8px; }
+    h2 { margin-top:42px; font-size:1.5rem; border-bottom:1px solid var(--line); padding-bottom:8px; }
+    h3 { margin:0 0 16px; color:var(--accent); }
     .authors { color:var(--muted); margin-bottom:32px; }
     .abstract { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:24px; }
     .abstract h2 { margin:0 0 10px; border:0; padding:0; }
     .keywords { color:var(--muted); margin-top:14px; font-size:.95rem; }
+    .compressor-section { margin-top:36px; }
+    .compressor-section > h2 { margin-top:0; }
     .audio-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:16px; }
     .example { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px; }
-    .example h3 { margin:0 0 12px; font-size:1rem; color:var(--accent); }
     .track { margin:11px 0; }
     .track label { display:block; color:var(--muted); font-size:.84rem; margin-bottom:4px; }
     audio { width:100%; height:34px; }
-    code { color:#0040b3; }
     pre { overflow:auto; background:#f0f4fc; border:1px solid var(--line); border-radius:10px; padding:16px; }
+    code { color:#0040b3; }
     @media (max-width:600px) { main { padding:30px 16px 50px; } }
   </style>
 </head>
@@ -32,20 +33,25 @@
   <main>
     <header>
       <h1>A Signal-Flow-Structured State-Space Model of Optical Dynamic Range Compressors</h1>
-      <div class="authors">Riccardo Simionato · Univ. Bordeaux, CNRS, Bordeaux INP, LaBRI · ICASSP</div>
+      <div class="authors">Riccardo Simionato · Univ. Bordeaux, CNRS, Bordeaux INP, LaBRI</div>
     </header>
 
     <section class="abstract">
       <h2>Abstract</h2>
-      <p>Optical dynamic range compressors exhibit complex, time-varying ballistics that make them difficult to model with fixed analytical expressions. This work presents a state-space neural network that mirrors the compressor’s own signal flow to enhance both accuracy and interpretability. We evaluate the proposed model on the Teletronix LA-2A and the Tube-Tech CL 1B optical compressors, comparing it against black-box and gray-box baselines. Results show that this domain-informed structure substantially reduces capacity requirements while processing sample-by-sample and remaining sample-rate independent and interpretable. The model ranks competitively on every metric on both devices, matching or exceeding black-box baselines that use two to three orders of magnitude more parameters and operations per sample.
-        </p>
+      <p>Optical dynamic range compressors exhibit complex, time-varying ballistics that make them difficult to model with fixed analytical expressions. This work presents a state-space neural network that mirrors the compressor’s own signal flow to enhance both accuracy and interpretability. We evaluate the proposed model on the Teletronix LA-2A and the Tube-Tech CL 1B optical compressors, comparing it against black-box and gray-box baselines. Results show that this domain-informed structure substantially reduces capacity requirements while processing sample-by-sample and remaining sample-rate independent and interpretable. The model ranks competitively on every metric on both devices, matching or exceeding black-box baselines that use two to three orders of magnitude more parameters and operations per sample.</p>
       <div class="keywords"><strong>Index Terms:</strong> dynamic range compression, gray-box modeling, state-space models, LA-2A, CL 1B, differentiable digital signal processing</div>
     </section>
 
-    <section>
-      <h2>Audio examples</h2>
-      <p>Each example contains one input signal, one target recording from the hardware compressor, and the model outputs.</p>
-      <div id="audio-examples" class="audio-grid"></div>
+    <section class="compressor-section">
+      <h2>Teletronix LA-2A</h2>
+      <p>Audio examples for the Teletronix LA-2A under different Peak Reduction settings.</p>
+      <div id="la2a-examples" class="audio-grid"></div>
+    </section>
+
+    <section class="compressor-section">
+      <h2>Tube-Tech CL 1B</h2>
+      <p>Audio examples for the Tube-Tech CL 1B under different threshold, ratio, attack, and release settings.</p>
+      <div id="cl1b-examples" class="audio-grid"></div>
     </section>
 
     <section>
@@ -59,53 +65,76 @@
     </section>
   </main>
 
-<script>
-  const titlesNames = [
-    "Peak Reduction: 2",
-    "Peak Reduction: 4",
-    "Peak Reduction: 6",
-    "Peak Reduction: 8",
-    "Peak Reduction: 10"
-  ];
+  <script>
+    const outputNames = [
+      "Diff-Opto",
+      "GCN-TFiLM",
+      "GreyBoxComp",
+      "Mamba",
+      "SPTMod",
+      "TCN"
+    ];
 
-  const models = [
-    { name: "Diff-Opto", file: "diffopto" },
-    { name: "TCN", file: "tcn" },
-    { name: "GCN-TFiLM", file: "gcntf" },
-    { name: "GreyBoxComp", file: "greybox" },
-    { name: "Mamba", file: "mamba" },
-    { name: "SPTMod", file: "sptmod" }
-  ];
+    const outputFiles = ["diffopto", "gcntf", "greybox", "mamba", "sptmod", "tcn"];
 
-  const examples = titlesNames.map((title, i) => {
-    const pk = (i + 1) * 2;
+    const audio = (label, src) => `
+      <div class="track">
+        <label>${label}</label>
+        <audio controls preload="none" src="${src}">
+          Your browser does not support the audio element.
+        </audio>
+      </div>`;
 
-    return {
-      title,
-      input: "static/audio/LA2A/input/0_input_audio.wav",
-      target: `static/audio/LA2A/pk${pk}/0_output_audio.wav`,
-      outputs: models.map(model => ({
-        label: model.name,
-        src: `static/audio/LA2A/pk${pk}/${model.file}_prediction_audio.wav`
-      }))
-    };
-  });
+    function renderExample(example) {
+      return `
+        <article class="example">
+          <h3>${example.title}</h3>
+          ${audio("Input", example.input)}
+          ${audio("Target", example.target)}
+          ${example.outputs.map((src, i) => audio(outputNames[i], src)).join("")}
+        </article>`;
+    }
 
-  const audio = (label, src) => `
-    <div class="track">
-      <label>${label}</label>
-      <audio controls preload="none" src="${src}">
-        Your browser does not support the audio element.
-      </audio>
-    </div>`;
+    const la2aTitles = [
+      "Peak Reduction: 2",
+      "Peak Reduction: 4",
+      "Peak Reduction: 6",
+      "Peak Reduction: 8",
+      "Peak Reduction: 10"
+    ];
 
-  document.getElementById("audio-examples").innerHTML = examples.map(example => `
-    <article class="example">
-      <h3>${example.title}</h3>
-      ${audio("Input", example.input)}
-      ${audio("Target", example.target)}
-      ${example.outputs.map(output => audio(output.label, output.src)).join("")}
-    </article>`).join("");
-</script>
+    const la2aExamples = la2aTitles.map((title, i) => {
+      const pk = (i + 1) * 2;
+      return {
+        title,
+        input: "static/audio/LA2A/input/0_input_audio.wav",
+        target: `static/audio/LA2A/pk${pk}/0_output_audio.wav`,
+        outputs: outputFiles.map(file => `audio/LA2A/pk${pk}/${file}_prediciton_audio.wav`)
+      };
+    });
+
+    const cl1bFolders = [
+      "th30_ra2_at0_rel0",
+      "th30_ra4_at0.5_rel0",
+      "th30_ra8_at0.5_rel0.5",
+      "th30_ra10_at0_rel0.5",
+      "th30_ra10_at1_rel1"
+    ];
+
+    const cl1bExamples = cl1bFolders.map(folder => {
+      const match = folder.match(/^th([^_]+)_ra([^_]+)_at([^_]+)_rel(.+)$/);
+      const [, threshold, ratio, attack, release] = match;
+
+      return {
+        title: `Threshold ${threshold}, Ratio ${ratio}, Attack ${attack}, Release ${release}`,
+        input: `static/audio/CL1B/${folder}/0_input_audio.wav`,
+        target: `static/audio/CL1B/${folder}/0_output_audio.wav`,
+        outputs: outputFiles.map(file => `audio/CL1B/${folder}/${file}_prediciton_audio.wav`)
+      };
+    });
+
+    document.getElementById("la2a-examples").innerHTML = la2aExamples.map(renderExample).join("");
+    document.getElementById("cl1b-examples").innerHTML = cl1bExamples.map(renderExample).join("");
+  </script>
 </body>
 </html>
