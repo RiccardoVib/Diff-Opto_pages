@@ -59,15 +59,10 @@
 
 <script>
   const titlesNames = [
-    "Peak Reduction: 1",
     "Peak Reduction: 2",
-    "Peak Reduction: 3",
     "Peak Reduction: 4",
-    "Peak Reduction: 5",
     "Peak Reduction: 6",
-    "Peak Reduction: 7",
     "Peak Reduction: 8",
-    "Peak Reduction: 9",
     "Peak Reduction: 10"
   ];
 
@@ -81,7 +76,7 @@
   ];
 
   const examples = titlesNames.map((title, i) => {
-    const pk = i + 1;
+    const pk = (i + 1) * 2;
 
     return {
       title,
