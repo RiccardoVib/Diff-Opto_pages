@@ -80,11 +80,11 @@
 
     return {
       title,
-      input: "audio/LA2A/input/0_input_audio.wav",
-      target: `audio/LA2A/pk${pk}/0_output_audio.wav`,
+      input: "static/audio/LA2A/input/0_input_audio.wav",
+      target: `static/audio/LA2A/pk${pk}/0_output_audio.wav`,
       outputs: models.map(model => ({
         label: model.name,
-        src: `audio/LA2A/pk${pk}/${model.file}_prediction_audio.wav`
+        src: `static/audio/LA2A/pk${pk}/${model.file}_prediction_audio.wav`
       }))
     };
   });
