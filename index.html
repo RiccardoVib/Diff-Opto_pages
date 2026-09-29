@@ -69,24 +69,29 @@
     "Peak Reduction: 8",
     "Peak Reduction: 9",
     "Peak Reduction: 10"
-    // edit these as you like
   ];
 
-  const outputNames = [
-    "Diff-Opto",
-    "Mamba",
-    "SPTMod",
-    "TCN",
-    "GCN-TFILM",
-    "GreyBoxComp"
+  const models = [
+    { name: "Diff-Opto", file: "diffopto" },
+    { name: "GCN-TFiLM", file: "gcntf" },
+    { name: "GreyBoxComp", file: "greybox" },
+    { name: "Mamba", file: "mamba" },
+    { name: "SPTMod", file: "sptmod" }
   ];
 
-  const examples = Array.from({ length: 10 }, (_, i) => ({
-    // title is now taken from titlesNames[i]
-    input: `audio/example_${i + 1}/input.wav`,
-    target: `audio/example_${i + 1}/target.wav`,
-    outputs: Array.from({ length: 6 }, (_, j) => `audio/example_${i + 1}/output_${j + 1}.wav`)
-  }));
+  const examples = titlesNames.map((title, i) => {
+    const pk = i + 1;
+
+    return {
+      title,
+      input: "audio/LA2A/input/0_input_audio.wav",
+      target: `audio/LA2A/pk${pk}/0_output_audio.wav`,
+      outputs: models.map(model => ({
+        label: model.name,
+        src: `audio/LA2A/pk${pk}/${model.file}_prediciton_audio.wav`
+      }))
+    };
+  });
 
   const audio = (label, src) => `
     <div class="track">
@@ -96,13 +101,13 @@
       </audio>
     </div>`;
 
-  document.getElementById('audio-examples').innerHTML = examples.map((example, i) => `
+  document.getElementById("audio-examples").innerHTML = examples.map(example => `
     <article class="example">
-      <h3>${titlesNames[i]}</h3>
-      ${audio('Input', example.input)}
-      ${audio('Target', example.target)}
-      ${example.outputs.map((src, j) => audio(outputNames[j], src)).join('')}
-    </article>`).join('');
+      <h3>${example.title}</h3>
+      ${audio("Input", example.input)}
+      ${audio("Target", example.target)}
+      ${example.outputs.map(output => audio(output.label, output.src)).join("")}
+    </article>`).join("");
 </script>
 </body>
 </html>
