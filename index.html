@@ -109,7 +109,7 @@
         title,
         input: "static/audio/LA2A/input/0_input_audio.wav",
         target: `static/audio/LA2A/pk${pk}/0_output_audio.wav`,
-        outputs: outputFiles.map(file => `audio/LA2A/pk${pk}/${file}_prediciton_audio.wav`)
+        outputs: outputFiles.map(file => `static/audio/LA2A/pk${pk}/${file}_prediciton_audio.wav`)
       };
     });
 
@@ -129,7 +129,7 @@
         title: `Threshold ${threshold}, Ratio ${ratio}, Attack ${attack}, Release ${release}`,
         input: `static/audio/CL1B/${folder}/0_input_audio.wav`,
         target: `static/audio/CL1B/${folder}/0_output_audio.wav`,
-        outputs: outputFiles.map(file => `audio/CL1B/${folder}/${file}_prediciton_audio.wav`)
+        outputs: outputFiles.map(file => `static/audio/CL1B/${folder}/${file}_prediciton_audio.wav`)
       };
     });
 
